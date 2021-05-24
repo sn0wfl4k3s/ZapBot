@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31220.234
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZapBot", "ZapBot\ZapBot.csproj", "{7BB3DF80-37FB-48CF-9C2F-18536D59F4DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BB3DF80-37FB-48CF-9C2F-18536D59F4DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BB3DF80-37FB-48CF-9C2F-18536D59F4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BB3DF80-37FB-48CF-9C2F-18536D59F4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BB3DF80-37FB-48CF-9C2F-18536D59F4DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9F0F28DD-714E-4A2E-9093-A2797AA96603}
+	EndGlobalSection
+EndGlobal
