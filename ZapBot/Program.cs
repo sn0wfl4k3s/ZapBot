@@ -27,18 +27,19 @@ namespace ZapBot
                 if (!string.IsNullOrEmpty(answer) && !string.IsNullOrWhiteSpace(answer))
                     horas = int.Parse(answer);
             });
-            string plural = horas > 1 ? "s" : string.Empty;
-            Mensagem($"Pegando as mensagens de {horas} hora{plural} atrás...", ConsoleColor.Green, pressEnter: false);
+            string alert = $"Pegando as mensagens de {horas} hora{(horas > 1 ? "s" : string.Empty)} atrás...";
+            Mensagem(alert, ConsoleColor.Green, pressEnter: false);
             var options = new EdgeOptions
             {
                 UseChromium = true,
+                AcceptInsecureCertificates = true,
                 PageLoadStrategy = PageLoadStrategy.Eager,
                 UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore,
-                AcceptInsecureCertificates = true,
             };
-            options.AddArgument($@"--user-data-dir=C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\User Data 2");
+            string userDataDir2 = $@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\ZapBot";
+            options.AddArgument($@"--user-data-dir={userDataDir2}");
             using var driver = new EdgeDriver(options);
-            driver.Manage().Window.Position = new System.Drawing.Point(-1400, -70);
+            //driver.Manage().Window.Position = new System.Drawing.Point(-1400, -70);
             driver.Navigate().GoToUrl("https://web.whatsapp.com/");
             try
             {
@@ -105,9 +106,9 @@ namespace ZapBot
                     driver.ExecuteScript("window.open()");
                     Pause(.2f);
                     driver.SwitchTo().Window(driver.WindowHandles.Last());
-                    Pause(.2f);
+                    Pause(.5f);
                     driver.Navigate().GoToUrl("https://yt1s.com/youtube-to-mp3/pt");
-                    Pause(.2f);
+                    Pause(.5f);
                     pages.Add(driver.CurrentWindowHandle);
                 }
 
@@ -117,28 +118,30 @@ namespace ZapBot
                     ExecuteUntilWorks(delegate ()
                     {
                         driver.SwitchTo().Window(pagesArrays[i]);
-                        Pause(.2f);
+                        Pause(.5f);
                         var input = driver.FindElement(By.Id("s_input"));
-                        Pause(.2f);
-                        input.Click();
                         Pause(1);
+                        input.Click();
+                        Pause(.5f);
                         input.SendKeys(messages[i].link);
                         Pause(.5f);
                         input.SendKeys(Keys.Enter);
                     });
                 }
 
+                Pause(1);
+
                 var inicioDownloads = DateTime.Now;
+
                 for (int i = 0; i < messages.Length; ++i)
                 {
                     ExecuteUntilWorks(delegate ()
                     {
                         driver.SwitchTo().Window(pagesArrays[i]);
-                        Pause(.2f);
-                        var baixar = driver.FindElement(By.Id("asuccess"));
-                        Pause(0.3f);
+                        Pause(.7f);
+                        var baixar = driver.FindElement(By.XPath("//*[@id=\"asuccess\"]"));
+                        Pause(1);
                         baixar.Click();
-                        Pause(0.2f);
                     });
                 }
 
@@ -152,16 +155,17 @@ namespace ZapBot
                 int quantidadeDeMp3Baixado = 0;
                 do
                 {
-                    Pause(1);
+                    Pause(2);
                     quantidadeDeMp3Baixado = Directory
                         .GetFiles(downloadPath)
                         .Select(f => new FileInfo(f))
-                        .Where(mp3Valido)
-                        .Count();
+                        .Count(mp3Valido);
                 } while (quantidadeDeMp3Baixado < messages.Length);
 
                 Mensagem("Downloads concluídos com sucesso.", ConsoleColor.Green, pressEnter: false);
-                Pause(2);
+                Pause(1);
+
+                CloseAll(driver);
 
                 Mensagem("Esperando plugar o mp3 ou pendrive...", pressEnter: false);
                 string[] unidades = { "D:", "E:", "F:", "G:" };
@@ -224,12 +228,21 @@ namespace ZapBot
             {
                 Mensagem($"{e.Source}: {e.Message}", ConsoleColor.Red);
             }
-            finally
-            {
-                driver.Quit();
-            }
+
+            CloseAll(driver);
         }
 
+        static void CloseAll(IWebDriver driver)
+        {
+            foreach (var page in driver.WindowHandles)
+            {
+                driver.SwitchTo().Window(page);
+                Pause(.9f);
+                driver.Close();
+                Pause(.9f);
+            }
+            driver.Quit();
+        }
         static void Pause(float segundos) => Thread.Sleep((int)segundos * 1000);
         static void Mensagem(string mensagem, ConsoleColor color = ConsoleColor.Cyan, bool pressEnter = true, bool breakline = true, bool clear = false)
         {
