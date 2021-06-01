@@ -39,11 +39,11 @@ namespace ZapBot
             string userDataDir2 = $@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\ZapBot";
             options.AddArgument($@"--user-data-dir={userDataDir2}");
             using var driver = new EdgeDriver(options);
-            //driver.Manage().Window.Position = new System.Drawing.Point(-1400, -70);
+            driver.Manage().Window.Position = new System.Drawing.Point(-1400, -70);
             driver.Navigate().GoToUrl("https://web.whatsapp.com/");
             try
             {
-                Mensagem("Scanneie o código QR...", ConsoleColor.Green, pressEnter: false);
+                Mensagem("Scanneie o código QR se necessário...", ConsoleColor.Green, pressEnter: false);
 
                 ExecuteUntilWorks(delegate ()
                 {
@@ -52,7 +52,7 @@ namespace ZapBot
                     Pause(.6f);
                 });
 
-                Mensagem("Scanneado!", ConsoleColor.Green, pressEnter: false);
+                Mensagem("Verificando as mensagens...", ConsoleColor.Green, pressEnter: false);
 
                 ExecuteUntilWorks(delegate ()
                 {
@@ -64,15 +64,14 @@ namespace ZapBot
 
                 ExecuteUntilWorks(delegate ()
                 {
-                    Pause(1);
                     var mensagemAntiga = driver.FindElements(By.ClassName("message-in")).First();
                     actions.MoveToElement(mensagemAntiga);
                     actions.Perform();
-                    Pause(1);
+                    Pause(.5f);
                     mensagemAntiga = driver.FindElements(By.ClassName("message-in")).First();
                     actions.MoveToElement(mensagemAntiga);
                     actions.Perform();
-                    Pause(2);
+                    Pause(.5f);
                 });
 
                 var messages = driver
@@ -99,6 +98,11 @@ namespace ZapBot
                 }
 
                 Mensagem($"Foram encontrados {messages.Length} links...", ConsoleColor.Green, pressEnter: false);
+                for (int i = 0; i < messages.Length; ++i)
+                {
+                    string tituloVideo = $"- {messages[i].title.Substring(0, 40)}...";
+                    Mensagem(tituloVideo, ConsoleColor.DarkCyan, pressEnter: false);
+                }
 
                 var pages = new List<string>();
                 for (int i = 0; i < messages.Length; ++i)
@@ -144,6 +148,8 @@ namespace ZapBot
                         baixar.Click();
                     });
                 }
+
+                driver.Manage().Window.Minimize();
 
                 Mensagem("Esperando os downloads terminarem...", ConsoleColor.Green, pressEnter: false);
 
