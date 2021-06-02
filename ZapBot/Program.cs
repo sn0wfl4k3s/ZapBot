@@ -39,7 +39,6 @@ namespace ZapBot
             string userDataDir2 = $@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\ZapBot";
             options.AddArgument($@"--user-data-dir={userDataDir2}");
             using var driver = new EdgeDriver(options);
-            driver.Manage().Window.Position = new System.Drawing.Point(-1400, -70);
             driver.Navigate().GoToUrl("https://web.whatsapp.com/");
             try
             {
@@ -102,7 +101,7 @@ namespace ZapBot
                 {
                     int tamanhoMaxTitulo = 40;
                     string tituloFormatado = messages[i].title.Length > tamanhoMaxTitulo ?
-                        $"{messages[i].title.Substring(0, tamanhoMaxTitulo)}..." : 
+                        $"{messages[i].title.Substring(0, tamanhoMaxTitulo)}..." :
                         messages[i].title;
                     string tituloVideo = $"- {tituloFormatado}";
                     Mensagem(tituloVideo, ConsoleColor.DarkCyan, pressEnter: false);
@@ -153,8 +152,6 @@ namespace ZapBot
                     });
                 }
 
-                driver.Manage().Window.Minimize();
-
                 Mensagem("Esperando os downloads terminarem...", ConsoleColor.Green, pressEnter: false);
 
                 string[] titulos = messages.Select(m => m.title.Trim()).ToArray();
@@ -175,7 +172,7 @@ namespace ZapBot
                 Mensagem("Downloads concluídos com sucesso.", ConsoleColor.Green, pressEnter: false);
                 Pause(1);
 
-                CloseAll(driver);
+                driver.Quit();
 
                 Mensagem("Esperando plugar o mp3 ou pendrive...", pressEnter: false);
                 string[] unidades = { "D:", "E:", "F:", "G:" };
@@ -238,21 +235,12 @@ namespace ZapBot
             {
                 Mensagem($"{e.Source}: {e.Message}", ConsoleColor.Red);
             }
-
-            CloseAll(driver);
-        }
-
-        static void CloseAll(IWebDriver driver)
-        {
-            foreach (var page in driver.WindowHandles)
+            finally
             {
-                driver.SwitchTo().Window(page);
-                Pause(.9f);
-                driver.Close();
-                Pause(.9f);
+                driver.Quit();
             }
-            driver.Quit();
         }
+
         static void Pause(float segundos) => Thread.Sleep((int)segundos * 1000);
         static void Mensagem(string mensagem, ConsoleColor color = ConsoleColor.Cyan, bool pressEnter = true, bool breakline = true, bool clear = false)
         {
