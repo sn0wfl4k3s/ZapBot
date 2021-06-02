@@ -220,6 +220,7 @@ namespace ZapBot
                 {
                     try
                     {
+                        Mensagem($"Transferindo: {musicas[i].Name}", ConsoleColor.Green, pressEnter: false);
                         File.Copy(musicas[i].FullName, Path.Combine(unidade, musicas[i].Name));
                     }
                     catch (Exception e)
