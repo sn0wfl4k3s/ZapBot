@@ -100,7 +100,11 @@ namespace ZapBot
                 Mensagem($"Foram encontrados {messages.Length} links...", ConsoleColor.Green, pressEnter: false);
                 for (int i = 0; i < messages.Length; ++i)
                 {
-                    string tituloVideo = $"- {messages[i].title.Substring(0, 40)}...";
+                    int tamanhoMaxTitulo = 40;
+                    string tituloFormatado = messages[i].title.Length > tamanhoMaxTitulo ?
+                        $"{messages[i].title.Substring(0, tamanhoMaxTitulo)}..." : 
+                        messages[i].title;
+                    string tituloVideo = $"- {tituloFormatado}";
                     Mensagem(tituloVideo, ConsoleColor.DarkCyan, pressEnter: false);
                 }
 
