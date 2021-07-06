@@ -8,7 +8,7 @@ namespace ZapBot
         public static void Pause(float segundos) => Thread.Sleep((int)segundos * 1000);
         public static void Mensagem(string mensagem, ConsoleColor color = ConsoleColor.Cyan, bool pressEnter = true, bool breakline = true, bool clear = false)
         {
-            Console.Beep();
+            //Console.Beep();
             if (clear)
                 Console.Clear();
             Console.ResetColor();

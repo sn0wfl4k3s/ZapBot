@@ -8,14 +8,27 @@ namespace ZapBot
 {
     class Program
     {
-        static readonly string Conversa = "Pai";
+        static readonly string[] Conversas = new[] { "Pai", "Mãe" };
 
         static void Main(string[] args)
         {
-            int hoursAgo = 3;
+            string conversa = Conversas[0];
             Set.ExecuteUntilWorks(delegate ()
             {
-                Set.Mensagem($"Pegar as mensagens de quantas horas atrás? ({hoursAgo} horas padrão)", pressEnter: false, clear: true);
+                Set.Mensagem("Pegar de qual conversa?", pressEnter: false, clear: true);
+                for (int i = 0; i < Conversas.Length; ++i)
+                    Set.Mensagem($"{i+1} -> {Conversas[i]}", pressEnter: false);
+                Set.Mensagem("Digite o número da conversa: ", pressEnter: false, breakline: false);
+                string answer = Console.ReadLine();
+                if (!string.IsNullOrEmpty(answer))
+                    conversa = Conversas[int.Parse(answer)-1];
+            });
+            Set.Mensagem($"Pegando as conversas de {conversa}...", ConsoleColor.Green, pressEnter: false);
+
+            int hoursAgo = 1;
+            Set.ExecuteUntilWorks(delegate ()
+            {
+                Set.Mensagem($"Pegar as mensagens de quantas horas atrás? ({hoursAgo} horas padrão)", pressEnter: false);
                 Set.Mensagem("Digite a quantidade de horas atrás: ", pressEnter: false, breakline: false);
                 string answer = Console.ReadLine();
                 if (!string.IsNullOrEmpty(answer) && !string.IsNullOrWhiteSpace(answer))
@@ -36,7 +49,7 @@ namespace ZapBot
             {
                 using WhatsAppWeb whatsapp = new(driver);
                 whatsapp.Open();
-                whatsapp.OpenTalk(Conversa);
+                whatsapp.OpenTalk(conversa);
                 whatsapp.ScrollTalk(2);
                 var messages = whatsapp.GetYoutubeLinks(hoursAgo);
                 whatsapp.Dispose();
@@ -82,7 +95,6 @@ namespace ZapBot
                 filemanager.TransfererFilesTo(device);
 
                 Set.Mensagem($"Áudios transferidos com sucesso. =)", ConsoleColor.Green, pressEnter: false);
-
             }
             catch (Exception e)
             {
@@ -93,6 +105,5 @@ namespace ZapBot
                 driver.Quit();
             }
         }
-
     }
 }
